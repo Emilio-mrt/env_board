@@ -5,7 +5,7 @@
 #include "SPI.h"
 #include "SD.h"
 #include "FS.h"
-
+#include "led.h"
 
 #define PATH "/conf.txt"
 #define CONFIG_STRING \
@@ -27,7 +27,7 @@
 "APPKEY=A7C8DD6949694FCD3D4792918F9F6791\n" \
 "\n" \
 "# Mode éco (entier : 0 ou 1)\n" \
-"mode_eco=FALSE\n" \
+"mode_eco=false\n" \
 "\n" \
 "# Délai d'envoi (entier, en millisecondes)\n" \
 "time_delay_send=10000"
@@ -37,9 +37,10 @@ void initSD();
 String getConfigValue(File configFile, const String& key);
 int get_card_id();
 String get_brd_name();
-int get_v_batt_nom();
+float get_v_batt_nom();
 String get_APP_KEY();
 bool get_mode_eco();
 int get_delay_send();
+bool get_status_sd();
 
 #endif

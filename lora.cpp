@@ -45,7 +45,10 @@ void initLoRa() {
         at_send_check_response("+DELAY:", 1000, "AT+DELAY=JRX2,6000\r\n");
         at_send_check_response("", 1000, "AT+ID\r\n");
 
-        if(get_mode_eco()){at_send_check_response("+ADR: ON", 1000, "AT+ADR=ON\r\n");}//Si sur batterie
+        if(get_mode_eco()){
+            at_send_check_response("+DR:", 1000, "AT+DR=DR3\r\n");
+            at_send_check_response("+POWER: ", 1000, "AT+POWER=14\r\n");
+            }//Si sur batterie
         else{
             at_send_check_response("+DR:", 1000, "AT+DR=DR3\r\n");
             at_send_check_response("+POWER: ", 1000, "AT+POWER=22\r\n");
@@ -68,10 +71,14 @@ void joinLoRa() {
     for(int i=0; i<try_to_join ; i++){
         if (at_send_check_response("+JOIN: Network joined", 11000, "AT+JOIN\r\n")) {
             is_join = true;
+            sendLoRaName(get_card_id(),get_brd_name());
+            Serial1.println("ok");
             return;
         }
         else if (at_send_check_response("+JOIN: Joined already", 11000, "AT+JOIN\r\n")) {
             is_join = true;
+            sendLoRaName(get_card_id(),get_brd_name());
+            Serial1.println("ok1");
             return;
         } else {
             at_send_check_response("+JOIN: Join failed", 11000, "AT+JOIN=FORCE\r\n");
@@ -93,10 +100,27 @@ bool wakeLoRa(){
     }
     return false;
 }
-void sendLoRaData(uint16_t card_id, float temp, float humi, float pressure, int particles[3], float vbat,String name_brd) {
-    char frame[128];
-    snprintf(frame, sizeof(frame), "AT+CMSG=\"%u;%.2f;%.2f;%.2f;%d;%d;%d;%.2f;%s\"\r\n", card_id, temp, humi, pressure, particles[0], particles[1], particles[2], vbat,name_brd);
+bool sendLoRaData(uint16_t card_id, float temp, float humi, float pressure, int particles[3], float vbat) {
+    char frame[115];
+    int lenght = snprintf(frame, sizeof(frame), "AT+CMSG=\"1;%u;%.2f;%.2f;%.2f;%d;%d;%d;%.2f\"\r\n", card_id, temp, humi, pressure, particles[0], particles[1], particles[2], vbat);
+    Serial1.println(lenght);
     if (!at_send_check_response("Done", 50000, frame)) {
-        is_join = false;
+        return false;
+        is_join=false;
+    }
+    else{
+        return true;
+    }
+}
+bool sendLoRaName(uint16_t card_id,String name_brd) {
+    char frame[115];
+    int lenght = snprintf(frame, sizeof(frame), "AT+CMSG=\"2;%u;%s\"\r\n", card_id,name_brd.c_str());
+    Serial1.println(lenght);
+    if (!at_send_check_response("Done", 50000, frame)) {
+        return false;
+        is_join=false;
+    }
+    else{
+        return true;
     }
 }

@@ -4,13 +4,12 @@ DFRobot_BME680_I2C bme(0x76);
 
 void initSensors() {
     pinMode(SENSOR_PIN, INPUT);
-    while (bme.begin() != 0) {
-        delay(2000);
-    }
+    if(bme.begin()){Serial1.println("Bme initialisé");}
+    else{Serial1.println("Bme non initialisé");}
     bme.startConvert();
     delay(1000);
     bme.update();
-    sps_init();
+    sps_in vg it();
 
 }
 void sps_init() { // Initialisation du capteur SPS30
@@ -48,9 +47,5 @@ void measure_sps(int particleCounts[3]) {
 }
 
 float readBatteryVoltage() {
-    if(get_v_batt_nom()){
-        return analogRead(SENSOR_PIN) * ((get_v_batt_nom())/ 4096) * 2;
-    }else{
-        return NULL;
-    }
+    return analogRead(SENSOR_PIN) * ((get_v_batt_nom())/ 4096) * 2;
 }

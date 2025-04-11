@@ -7,12 +7,18 @@
 #define mS_TO_S_FACTOR 1000ULL
 #define RXD2 16
 #define TXD2 12
+int cpt_name=0;
 void sleepMode(int delay);
 void setup() {
     Serial.begin(9600);
     Serial1.begin(9600,SERIAL_8N1, RXD2, TXD2);
     initSD();    
     initLED();
+    if(!get_status_sd()){
+        while(1){
+        setLEDColor(128, 0, 128);
+        }
+    }
     initSensors();
     initLoRa();
 }
@@ -28,13 +34,19 @@ void loop() {
             joinLoRa();
             setLEDColor(100,0,0);
         } else {
-            sendLoRaData(get_card_id(), temperature, humidity, pressure, particleCounts, readBatteryVoltage(),get_brd_name());
-            clearLED();
-            if(get_mode_eco()){
-                sleepMode(get_delay_send());
-            }
-            else{
-                delay(get_delay_send());
+            if(sendLoRaData(get_card_id(), temperature, humidity, pressure, particleCounts, readBatteryVoltage())){
+                clearLED();
+                if (cpt_name>=10){
+                    sendLoRaName(get_card_id(),get_brd_name());
+                    cpt_name=0;
+                }
+                cpt_name++;
+                if(get_mode_eco()){
+                    sleepMode(get_delay_send());
+                }
+                else{
+                    delay(get_delay_send());
+                }
             }
         }
     } else {
