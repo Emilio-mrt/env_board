@@ -11,7 +11,7 @@ bool isLoRaJoined();
 void joinLoRa();
 bool sleepLoRa();
 bool wakeLoRa();
-bool sendLoRaData(uint16_t card_id,float temp, float humi, float pressure, int particles[3], float vbat);
+bool sendLoRaData(uint16_t card_id,float temp, float humi, float pressure, int particles[3], float vbat,float iaq);
 bool sendLoRaName(uint16_t card_id,String name_brd);
 
 

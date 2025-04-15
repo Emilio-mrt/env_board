@@ -24,9 +24,9 @@ void setup() {
 }
 
 void loop() {
-    float temperature, humidity, pressure;
+    float temperature, humidity, pressure,iaq;
     int particleCounts[3];
-    readBME680(temperature, humidity, pressure);
+    readBME680(temperature, humidity, pressure,iaq);
     measure_sps(particleCounts);
 
     if (isLoRaModuleAvailable()) {
@@ -34,7 +34,7 @@ void loop() {
             joinLoRa();
             setLEDColor(100,0,0);
         } else {
-            if(sendLoRaData(get_card_id(), temperature, humidity, pressure, particleCounts, readBatteryVoltage())){
+            if(sendLoRaData(get_card_id(), temperature, humidity, pressure/100, particleCounts, readBatteryVoltage(),iaq)){
                 clearLED();
                 if (cpt_name>=10){
                     sendLoRaName(get_card_id(),get_brd_name());
