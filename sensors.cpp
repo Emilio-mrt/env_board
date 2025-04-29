@@ -9,7 +9,7 @@ void initSensors() {
     bme.startConvert();
     delay(1000);
     bme.update();
-    sps_in vg it();
+    sps_init();
 
 }
 void sps_init() { // Initialisation du capteur SPS30
